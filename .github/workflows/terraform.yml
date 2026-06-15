@@ -41,9 +41,11 @@ jobs:
       - name: Terraform Destroy Plan
         run:  terraform plan -destroy     #affiche les ressources à detruire
 
-      - name: Wait for EC2 to be running        # attend que ec2 instance soit crée
+      # attend que ec2 instance soit crée
+      - name: Wait for EC2 to be running
         run: |
           INSTANCE_ID=$(terraform output -raw instance_id)
+          echo "Instance ID: $INSTANCE_ID"
           aws ec2 wait instance-running --instance-ids $INSTANCE_ID
 
       - name: Terraform Destroy         # détruit les ressources
