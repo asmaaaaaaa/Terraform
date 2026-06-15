@@ -42,11 +42,11 @@ jobs:
         run:  terraform plan -destroy     #affiche les ressources à detruire
 
       # attend que ec2 instance soit crée
+      - name: Get Instance ID
+        run: echo "INSTANCE_ID=$(terraform output -raw instance_id)" >> $GITHUB_ENV
+
       - name: Wait for EC2 to be running
-        run: |
-          INSTANCE_ID=$(terraform output -raw instance_id)
-          echo "Instance ID: $INSTANCE_ID"
-          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+        run: aws ec2 wait instance-running --instance-ids ${{ env.INSTANCE_ID }}
 
       - name: Terraform Destroy         # détruit les ressources
         run: terraform destroy -auto-approve
