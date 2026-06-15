@@ -21,20 +21,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup Terraform
+      - name: Setup Terraform       # setup terraform cli on the github action trainer wich allow us to run terraform command in the following steps 
         uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Initialize
+      - name: Terraform Initialize      #we initialize working directory containing terraform configuration files
         run: terraform init
 
-      - name: Terraform Validate
+      - name: Terraform Validate      # validate configuration files and directory refering only to the configuration and not accesing any remote services
         run: terraform validate 
 
-      - name: Terraform Plan
+      - name: Terraform Plan    # determine what action necessery to acheive the desired state defined in the terraform configuration files
         run: terraform plan 
         continue-on-error: true
 
-      - name: Terraform Apply
+      - name: Terraform Apply       # here we are finaly ready to apply the changes requiered and create ressources
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
