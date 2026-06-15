@@ -23,3 +23,12 @@ resource "aws_instance" "ec2_instance" {
     Name = "CICD test instance"
   }
 }
+
+# Outputs
+output "instance_id" {
+  value = aws_instance.ec2_instance.id
+}
+
+output "bucket_name" {
+  value = aws_s3_bucket.udabucket.bucket
+}

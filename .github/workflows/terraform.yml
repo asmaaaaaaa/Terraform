@@ -38,5 +38,13 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
-        run:  terraform plan -destroy
+      - name: Terraform Destroy Plan
+        run:  terraform plan -destroy     #affiche les ressources à detruire
+
+      - name: Wait for EC2 to be running        # attend que ec2 instance soit crée
+        run: |
+          INSTANCE_ID=$(terraform output -raw instance_id)
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+
+      - name: Terraform Destroy         # détruit les ressources
+        run: terraform destroy -auto-approve
