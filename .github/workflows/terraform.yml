@@ -43,7 +43,13 @@ jobs:
 
       # attend que ec2 instance soit crée
       - name: Get Instance ID
-        run: echo "INSTANCE_ID=$(terraform output -raw instance_id)" >> $GITHUB_ENV
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=CICD test instance" \
+                      "Name=instance-state-name,Values=pending,running" \
+            --query 'Reservations[0].Instances[0].InstanceId' \
+            --output text)
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
       - name: Wait for EC2 to be running
         run: aws ec2 wait instance-running --instance-ids ${{ env.INSTANCE_ID }}
